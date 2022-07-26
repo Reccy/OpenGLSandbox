@@ -73,6 +73,8 @@ ShaderProgramSource LoadShaderSource(std::string filepath)
 
 	result.vertex = sourceStream[(int)ShaderType::VERTEX].str();
 	result.fragment = sourceStream[(int)ShaderType::FRAGMENT].str();
+
+	return result;
 }
 
 bool GL_ValidateShaderCompiled(unsigned int shader)
@@ -113,10 +115,12 @@ bool GL_ValidateShaderProgramLinked(unsigned int program)
 	return success;
 }
 
-static unsigned int CompileShader(const char* source, ShaderType type)
+static unsigned int CompileShader(const std::string& source, ShaderType type)
 {
+	const char* str = source.c_str();
+
 	unsigned int shader = glCreateShader(ShaderTypeConsts[(int)type]);
-	glShaderSource(shader, 1, &source, NULL);
+	glShaderSource(shader, 1, &str, NULL);
 	glCompileShader(shader);
 
 	if (!GL_ValidateShaderCompiled(shader))
@@ -154,7 +158,7 @@ void GL_ProcessInput(GLFWwindow* window)
 		ClearColor = &White;
 }
 
-unsigned int CreateShaderProgram(const char* vertexShaderSource, const char* fragmentShaderSource)
+unsigned int CreateShaderProgram(const std::string& vertexShaderSource, const std::string& fragmentShaderSource)
 {
 	unsigned int vertexShader = CompileShader(vertexShaderSource, ShaderType::VERTEX);
 	unsigned int fragmentShader = CompileShader(fragmentShaderSource, ShaderType::FRAGMENT);
@@ -217,9 +221,9 @@ int main(void)
 
 	std::string strWindowTitle = ss.str();
 
-	const char* glWindowTitle = strWindowTitle.c_str();
+	std::string glWindowTitle = strWindowTitle;
 
-	glfwSetWindowTitle(window, glWindowTitle);
+	glfwSetWindowTitle(window, glWindowTitle.c_str());
 
 	glViewport(0, 0, 800, 600);
 
@@ -254,7 +258,7 @@ int main(void)
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
 	ShaderProgramSource shaderSource = LoadShaderSource("res/shaders/Default.shader");
-	unsigned int shaderProgram = CreateShaderProgram(shaderSource.vertex.c_str(), shaderSource.fragment.c_str());
+	unsigned int shaderProgram = CreateShaderProgram(shaderSource.vertex, shaderSource.fragment);
 	
 	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
