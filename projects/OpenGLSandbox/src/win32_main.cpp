@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <sstream>
+#include <fstream>
 
 // === Learning Resources ===
 // Learn OpenGL: https://learnopengl.com/
@@ -22,29 +23,57 @@ static Vector4 White { 1.0f, 1.0f, 1.0f, 1.0f };
 
 static Vector4* ClearColor = &Red;
 
-static const char* GL_VertexShaderSource = R"(
-#version 330 core
-layout (location = 0) in vec3 aPos;
-
-void main()
-{
-    gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);
-}
-)";
-
-static const char* GL_FragmentShaderSource = R"(
-#version 330 core
-out vec4 FragColor;
-
-void main()
-{
-    FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);
-}
-)";
-
 enum class ShaderType { NONE = -1, VERTEX = 0, FRAGMENT = 1 };
 const char* ShaderTypeStrings[2] = { "Vertex", "Fragment" };
 const int ShaderTypeConsts[] = { GL_VERTEX_SHADER, GL_FRAGMENT_SHADER };
+
+struct ShaderProgramSource
+{
+	std::string vertex;
+	std::string fragment;
+};
+
+ShaderProgramSource LoadShaderSource(std::string filepath)
+{
+	ShaderProgramSource result;
+
+	std::ifstream infile;
+	infile.open(filepath);
+
+	if (!infile.is_open())
+	{
+		std::cout << "[File Load Error] Failed to load file at " << filepath << std::endl;
+		return result;
+	}
+	
+	std::stringstream sourceStream[2];
+
+	enum ShaderType { NONE = -1, VERTEX = 0, FRAGMENT = 1 };
+	ShaderType type = NONE;
+
+	std::string line;
+	while (std::getline(infile, line))
+	{
+		if (line.find("#shader") != std::string::npos)
+		{
+			if (line.find("vertex") != std::string::npos)
+			{
+				type = ShaderType::VERTEX;
+			}
+			else if (line.find("fragment") != std::string::npos)
+			{
+				type = ShaderType::FRAGMENT;
+			}
+		}
+		else
+		{
+			sourceStream[(int)type] << line << '\n';
+		}
+	}
+
+	result.vertex = sourceStream[(int)ShaderType::VERTEX].str();
+	result.fragment = sourceStream[(int)ShaderType::FRAGMENT].str();
+}
 
 bool GL_ValidateShaderCompiled(unsigned int shader)
 {
@@ -127,8 +156,8 @@ void GL_ProcessInput(GLFWwindow* window)
 
 unsigned int CreateShaderProgram(const char* vertexShaderSource, const char* fragmentShaderSource)
 {
-	unsigned int vertexShader = CompileShader(GL_VertexShaderSource, ShaderType::VERTEX);
-	unsigned int fragmentShader = CompileShader(GL_FragmentShaderSource, ShaderType::FRAGMENT);
+	unsigned int vertexShader = CompileShader(vertexShaderSource, ShaderType::VERTEX);
+	unsigned int fragmentShader = CompileShader(fragmentShaderSource, ShaderType::FRAGMENT);
 
 	unsigned int shaderProgram = glCreateProgram();
 	glAttachShader(shaderProgram, vertexShader);
@@ -224,7 +253,8 @@ int main(void)
 	glBindBuffer(GL_ARRAY_BUFFER, vertexBufferObj);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-	unsigned int shaderProgram = CreateShaderProgram(GL_VertexShaderSource, GL_FragmentShaderSource);
+	ShaderProgramSource shaderSource = LoadShaderSource("res/shaders/Default.shader");
+	unsigned int shaderProgram = CreateShaderProgram(shaderSource.vertex.c_str(), shaderSource.fragment.c_str());
 	
 	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
