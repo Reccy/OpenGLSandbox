@@ -249,13 +249,8 @@ int main(void)
 	glGenVertexArrays(1, &vertexArrayObj);
 	glBindVertexArray(vertexArrayObj);
 
-	unsigned int indexBufferObj;
-	glGenBuffers(1, &indexBufferObj);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBufferObj);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-
+	ROGLL::IndexBuffer ibo(&indices, sizeof(indices));
 	ROGLL::VertexBuffer vbo(&vertices, sizeof(vertices));
-	vbo.Bind();
 
 	ShaderProgramSource shaderSource = LoadShaderSource("res/shaders/Default.shader");
 	unsigned int shaderProgram = CreateShaderProgram(shaderSource.vertex, shaderSource.fragment);

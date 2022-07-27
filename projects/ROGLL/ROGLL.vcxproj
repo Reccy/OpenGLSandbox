@@ -152,10 +152,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="ROGLL.h" />
+    <ClInclude Include="src\index_buffer.h" />
     <ClInclude Include="src\vertex_buffer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ROGLL.cpp" />
+    <ClCompile Include="src\index_buffer.cpp" />
     <ClCompile Include="src\vertex_buffer.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

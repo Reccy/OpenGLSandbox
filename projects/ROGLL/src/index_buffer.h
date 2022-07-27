@@ -2,15 +2,15 @@
 
 namespace ROGLL
 {
-	class VertexBuffer
+	class IndexBuffer
 	{
 	private:
 		unsigned int m_bufferId;
 	public:
-		VertexBuffer() = delete;
+		IndexBuffer() = delete;
 
-		VertexBuffer(const void* data, const int size);
-		~VertexBuffer();
+		IndexBuffer(const void* data, const int size);
+		~IndexBuffer();
 
 		void Bind() const;
 		void Unbind() const;

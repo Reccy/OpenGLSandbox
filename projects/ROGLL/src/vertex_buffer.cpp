@@ -23,6 +23,6 @@ namespace ROGLL
 
 	void VertexBuffer::Unbind() const
 	{
-		glBindBuffer(GL_ARRAY_BUFFER, NULL);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}
 }
