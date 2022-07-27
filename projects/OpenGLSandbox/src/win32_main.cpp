@@ -5,6 +5,8 @@
 #include <sstream>
 #include <fstream>
 
+#include <ROGLL.h>
+
 // === Learning Resources ===
 // Learn OpenGL: https://learnopengl.com/
 // The Cherno's OpenGL Playlist: https://youtube.com/playlist?list=PLlrATfBNZ98foTJPJ_Ev03o2oq3-GGOS2
@@ -190,6 +192,9 @@ unsigned int CreateShaderProgram(const std::string& vertexShaderSource, const st
 
 int main(void)
 {
+	fnDoSomething();
+	return 0;
+
 	glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
