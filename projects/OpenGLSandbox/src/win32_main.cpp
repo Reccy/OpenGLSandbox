@@ -3,7 +3,6 @@
 
 #include <iostream>
 #include <sstream>
-#include <fstream>
 
 #include <ROGLL.h>
 
@@ -25,116 +24,9 @@ static Vector4 White { 1.0f, 1.0f, 1.0f, 1.0f };
 
 static Vector4* ClearColor = &Red;
 
-enum class ShaderType { NONE = -1, VERTEX = 0, FRAGMENT = 1 };
-const char* ShaderTypeStrings[2] = { "Vertex", "Fragment" };
-const int ShaderTypeConsts[] = { GL_VERTEX_SHADER, GL_FRAGMENT_SHADER };
-
-struct ShaderProgramSource
-{
-	std::string vertex;
-	std::string fragment;
-};
-
-ShaderProgramSource LoadShaderSource(std::string filepath)
-{
-	ShaderProgramSource result;
-
-	std::ifstream infile;
-	infile.open(filepath);
-
-	if (!infile.is_open())
-	{
-		std::cout << "[File Load Error] Failed to load file at " << filepath << std::endl;
-		return result;
-	}
-	
-	std::stringstream sourceStream[2];
-
-	enum ShaderType { NONE = -1, VERTEX = 0, FRAGMENT = 1 };
-	ShaderType type = NONE;
-
-	std::string line;
-	while (std::getline(infile, line))
-	{
-		if (line.find("#shader") != std::string::npos)
-		{
-			if (line.find("vertex") != std::string::npos)
-			{
-				type = ShaderType::VERTEX;
-			}
-			else if (line.find("fragment") != std::string::npos)
-			{
-				type = ShaderType::FRAGMENT;
-			}
-		}
-		else
-		{
-			sourceStream[(int)type] << line << '\n';
-		}
-	}
-
-	result.vertex = sourceStream[(int)ShaderType::VERTEX].str();
-	result.fragment = sourceStream[(int)ShaderType::FRAGMENT].str();
-
-	return result;
-}
-
-bool GL_ValidateShaderCompiled(unsigned int shader)
-{
-	int success;
-	glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
-
-	if (!success)
-	{
-		int size = 256;
-		char* infoLog = (char*)_malloca(sizeof(char*) * size);
-		glGetShaderInfoLog(shader, size, &size, infoLog);
-
-		std::cout << "[OpenGL Shader Compile Error] " << infoLog << std::endl;
-
-		_freea(infoLog);
-	}
-
-	return success;
-}
-
-bool GL_ValidateShaderProgramLinked(unsigned int program)
-{
-	int success;
-	glGetProgramiv(program, GL_LINK_STATUS, &success);
-
-	if (!success)
-	{
-		int size = 256;
-		char* infoLog = (char*)_malloca(sizeof(char*) * size);
-		glGetProgramInfoLog(program, size, &size, infoLog);
-
-		std::cout << "[OpenGL Program Link Error] " << infoLog << std::endl;
-
-		_freea(infoLog);
-	}
-
-	return success;
-}
-
-static unsigned int CompileShader(const std::string& source, ShaderType type)
-{
-	const char* str = source.c_str();
-
-	unsigned int shader = glCreateShader(ShaderTypeConsts[(int)type]);
-	glShaderSource(shader, 1, &str, NULL);
-	glCompileShader(shader);
-
-	if (!GL_ValidateShaderCompiled(shader))
-	{
-		std::cout << "Failed to compile shader (Type: " << ShaderTypeStrings[(int)type] << ")" << std::endl;
-		glfwTerminate();
-		return -1;
-	}
-
-	std::cout << "Successfully compiled shader (Type: " << ShaderTypeStrings[(int)type] << ")" << std::endl;
-	return shader;
-}
+static ROGLL::Shader* ShaderA = nullptr;
+static ROGLL::Shader* ShaderB = nullptr;
+static ROGLL::Shader* CurrentShader = nullptr;
 
 void GL_FramebufferResized(GLFWwindow* window, int width, int height)
 {
@@ -158,36 +50,12 @@ void GL_ProcessInput(GLFWwindow* window)
 
 	if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
 		ClearColor = &White;
-}
 
-unsigned int CreateShaderProgram(const std::string& vertexShaderSource, const std::string& fragmentShaderSource)
-{
-	unsigned int vertexShader = CompileShader(vertexShaderSource, ShaderType::VERTEX);
-	unsigned int fragmentShader = CompileShader(fragmentShaderSource, ShaderType::FRAGMENT);
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+		CurrentShader = ShaderA;
 
-	unsigned int shaderProgram = glCreateProgram();
-	glAttachShader(shaderProgram, vertexShader);
-	glAttachShader(shaderProgram, fragmentShader);
-
-	glLinkProgram(shaderProgram);
-
-	if (!GL_ValidateShaderProgramLinked(shaderProgram))
-	{
-		std::cout << "Failed to link shader program" << std::endl;
-		glfwTerminate();
-		return -1;
-	}
-	else
-	{
-		std::cout << "Successfully linked shader program" << std::endl;
-	}
-
-	glUseProgram(shaderProgram);
-
-	glDeleteShader(vertexShader);
-	glDeleteShader(fragmentShader);
-
-	return shaderProgram;
+	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+		CurrentShader = ShaderB;
 }
 
 int main(void)
@@ -245,26 +113,32 @@ int main(void)
 		2, 3, 0,
 	};
 
-	ROGLL::VertexArray vao;
-	vao.Bind();
+	ROGLL::VertexArray vertexArray;
+	vertexArray.Bind();
 
-	ROGLL::IndexBuffer ibo(&indices, sizeof(indices));
-	ibo.Bind();
+	ROGLL::IndexBuffer indexBuffer(&indices, sizeof(indices));
+	indexBuffer.Bind();
 
-	ROGLL::VertexBuffer vbo(&vertices, sizeof(vertices));
-	vbo.Bind();
+	ROGLL::VertexBuffer vertexBuffer(&vertices, sizeof(vertices));
+	vertexBuffer.Bind();
 
-	ShaderProgramSource shaderSource = LoadShaderSource("res/shaders/Default.shader");
-	unsigned int shaderProgram = CreateShaderProgram(shaderSource.vertex, shaderSource.fragment);
-	
 	ROGLL::VertexAttributes layout;
 	layout.Add<float>(2);
 
-	vao.SetBuffer(layout, vbo);
+	vertexArray.SetBuffer(layout, vertexBuffer);
+
+	ROGLL::Shader a("res/shaders/Default.shader");
+	ROGLL::Shader b("res/shaders/Error.shader");
+
+	ShaderA = &a;
+	ShaderB = &b;
+	CurrentShader = ShaderA;
 
 	while (!glfwWindowShouldClose(window))
 	{
 		GL_ProcessInput(window);
+
+		CurrentShader->Bind();
 
 		glClearColor(ClearColor->x, ClearColor->y, ClearColor->z, ClearColor->w);
 		glClear(GL_COLOR_BUFFER_BIT);
