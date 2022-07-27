@@ -245,18 +245,22 @@ int main(void)
 		2, 3, 0,
 	};
 
-	unsigned int vertexArrayObj;
-	glGenVertexArrays(1, &vertexArrayObj);
-	glBindVertexArray(vertexArrayObj);
+	ROGLL::VertexArray vao;
+	vao.Bind();
 
 	ROGLL::IndexBuffer ibo(&indices, sizeof(indices));
+	ibo.Bind();
+
 	ROGLL::VertexBuffer vbo(&vertices, sizeof(vertices));
+	vbo.Bind();
 
 	ShaderProgramSource shaderSource = LoadShaderSource("res/shaders/Default.shader");
 	unsigned int shaderProgram = CreateShaderProgram(shaderSource.vertex, shaderSource.fragment);
 	
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
+	ROGLL::VertexAttributes layout;
+	layout.Add<float>(2);
+
+	vao.SetBuffer(layout, vbo);
 
 	while (!glfwWindowShouldClose(window))
 	{
