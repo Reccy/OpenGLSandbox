@@ -1,3 +1,3 @@
 #pragma once
 
-void fnDoSomething();
+#include "src/vertex_buffer.h"

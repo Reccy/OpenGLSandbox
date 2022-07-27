@@ -192,9 +192,6 @@ unsigned int CreateShaderProgram(const std::string& vertexShaderSource, const st
 
 int main(void)
 {
-	fnDoSomething();
-	return 0;
-
 	glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -257,10 +254,8 @@ int main(void)
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBufferObj);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
-	unsigned int vertexBufferObj;
-	glGenBuffers(1, &vertexBufferObj);
-	glBindBuffer(GL_ARRAY_BUFFER, vertexBufferObj);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+	ROGLL::VertexBuffer vbo(&vertices, sizeof(vertices));
+	vbo.Bind();
 
 	ShaderProgramSource shaderSource = LoadShaderSource("res/shaders/Default.shader");
 	unsigned int shaderProgram = CreateShaderProgram(shaderSource.vertex, shaderSource.fragment);
