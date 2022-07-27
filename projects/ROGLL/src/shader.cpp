@@ -4,13 +4,13 @@
 #include <fstream>
 #include <sstream>
 
-static struct ShaderProgramSource
+struct ShaderProgramSource
 {
 	std::string vertex;
 	std::string fragment;
 };
 
-static enum class ShaderType { NONE = -1, VERTEX = 0, FRAGMENT = 1 };
+enum class ShaderType { NONE = -1, VERTEX = 0, FRAGMENT = 1 };
 static const char* ShaderTypeStrings[2] = { "Vertex", "Fragment" };
 static const int ShaderTypeConsts[] = { GL_VERTEX_SHADER, GL_FRAGMENT_SHADER };
 

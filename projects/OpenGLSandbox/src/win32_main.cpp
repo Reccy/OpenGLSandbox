@@ -94,6 +94,7 @@ int main(void)
 	std::string glWindowTitle = strWindowTitle;
 
 	glfwSetWindowTitle(window, glWindowTitle.c_str());
+	glfwSwapInterval(1);
 
 	glViewport(0, 0, 800, 600);
 
