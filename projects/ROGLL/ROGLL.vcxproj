@@ -155,6 +155,7 @@
     <ClInclude Include="src\index_buffer.h" />
     <ClInclude Include="src\material.h" />
     <ClInclude Include="src\shader.h" />
+    <ClInclude Include="src\vector.h" />
     <ClInclude Include="src\vertex_attributes.h" />
     <ClInclude Include="src\vertex_array.h" />
     <ClInclude Include="src\vertex_buffer.h" />

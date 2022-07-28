@@ -7,8 +7,6 @@ namespace ROGLL
 	private:
 		unsigned int m_bufferId;
 	public:
-		VertexBuffer() = delete;
-
 		VertexBuffer(const void* data, const int size);
 		~VertexBuffer();
 

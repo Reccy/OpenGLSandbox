@@ -12,21 +12,18 @@
 // Documentation: https://docs.gl/
 // Open.GL: https://open.gl/
 
-struct Vector4
-{
-	float x, y, z, w;
-};
+using ROGLL::Vector1;
+using ROGLL::Vector2;
+using ROGLL::Vector3;
+using ROGLL::Vector4;
 
-static Vector4 Red { 1.0f, 0.0f, 0.0f, 1.0f };
-static Vector4 Green { 0.0f, 1.0f, 0.0f, 1.0f };
-static Vector4 Blue { 0.0f, 0.0f, 1.0f, 1.0f };
-static Vector4 White { 1.0f, 1.0f, 1.0f, 1.0f };
+static Vector4<float> Red { 1.0f, 0.0f, 0.0f, 1.0f };
+static Vector4<float> Green { 0.0f, 1.0f, 0.0f, 1.0f };
+static Vector4<float> Blue { 0.0f, 0.0f, 1.0f, 1.0f };
+static Vector4<float> White { 1.0f, 1.0f, 1.0f, 1.0f };
 
-static Vector4* ClearColor = &Red;
-
-static ROGLL::Shader* ShaderA = nullptr;
-static ROGLL::Shader* ShaderB = nullptr;
-static ROGLL::Shader* CurrentShader = nullptr;
+static Vector4<float>* ClearColor = &Red;
+static Vector4<float>* MaterialColor = &Red;
 
 void GL_FramebufferResized(GLFWwindow* window, int width, int height)
 {
@@ -52,10 +49,16 @@ void GL_ProcessInput(GLFWwindow* window)
 		ClearColor = &White;
 
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-		CurrentShader = ShaderA;
+		MaterialColor = &Red;
 
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-		CurrentShader = ShaderB;
+		MaterialColor = &Green;
+
+	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+		MaterialColor = &Blue;
+
+	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+		MaterialColor = &White;
 }
 
 int main(void)
@@ -128,24 +131,15 @@ int main(void)
 
 	vertexArray.SetBuffer(layout, vertexBuffer);
 
-	ROGLL::Shader a("res/shaders/Default.shader");
-	ROGLL::Shader b("res/shaders/Error.shader");
-
-	ShaderA = &a;
-	ShaderB = &b;
-	CurrentShader = ShaderA;
-
-	std::cout << "Uniform Location: "
-		<< a.GetUniformLocation("uColor") << std::endl;
-
-	ROGLL::Material mat(a);
-	mat.Set4("uColor", ROGLL::Vector4<float> { 1, 0, 0, 1 });
+	ROGLL::Shader shader("res/shaders/Default.shader");
+	ROGLL::Material mat(shader);
 
 	while (!glfwWindowShouldClose(window))
 	{
 		GL_ProcessInput(window);
 
-		CurrentShader->Bind();
+		mat.Set4("uColor", *MaterialColor);
+		mat.Bind();
 
 		glClearColor(ClearColor->x, ClearColor->y, ClearColor->z, ClearColor->w);
 		glClear(GL_COLOR_BUFFER_BIT);

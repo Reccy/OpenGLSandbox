@@ -6,3 +6,4 @@
 #include "src/vertex_attributes.h"
 #include "src/shader.h"
 #include "src/material.h"
+#include "src/vector.h"

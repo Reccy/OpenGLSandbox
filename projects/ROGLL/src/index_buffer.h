@@ -7,8 +7,6 @@ namespace ROGLL
 	private:
 		unsigned int m_bufferId;
 	public:
-		IndexBuffer() = delete;
-
 		IndexBuffer(const void* data, const int size);
 		~IndexBuffer();
 
