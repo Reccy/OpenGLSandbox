@@ -1,18 +1,6 @@
 #include "material.h"
 #include "glad/glad.h"
-
-template<typename T>
-static void SetUniform(std::unordered_map<int, T>& map, int key, T& value)
-{
-	if (map.find(key) == map.end())
-	{
-		map.insert({ key, value });
-	}
-	else
-	{
-		map[key] = value;
-	}
-}
+#include <functional>
 
 namespace ROGLL
 {
@@ -32,44 +20,64 @@ namespace ROGLL
 		m_uniformsUI1()
 	{}
 
-#define BindUniformsV1(map, func) for (auto pair : (map)) {\
-	const auto& vec = pair.second;\
-	(func)(pair.first, vec.x);\
-}\
+	template<typename T>
+	void BindUniformsT1(std::unordered_map<int, Vector1<T>> map, std::function<void(int, T)> fn)
+	{
+		for (const auto& pair : map)
+		{
+			const auto& vec = pair.second;
+			fn(pair.first, vec.x);
+		}
+	}
 
-#define BindUniformsV2(map, func) for (auto pair : (map)) {\
-	const auto& vec = pair.second;\
-	(func)(pair.first, vec.x, vec.y);\
-}\
+	template<typename T>
+	void BindUniformsT2(std::unordered_map<int, Vector2<T>> map, std::function<void(int, T, T)> fn)
+	{
+		for (const auto& pair : map)
+		{
+			const auto& vec = pair.second;
+			fn(pair.first, vec.x, vec.y);
+		}
+	}
 
-#define BindUniformsV3(map, func) for (auto pair : (map)) {\
-	const auto& vec = pair.second;\
-	(func)(pair.first, vec.x, vec.y, vec.z);\
-}\
+	template<typename T>
+	void BindUniformsT3(std::unordered_map<int, Vector3<T>> map, std::function<void(int, T, T, T)> fn)
+	{
+		for (const auto& pair : map)
+		{
+			const auto& vec = pair.second;
+			fn(pair.first, vec.x, vec.y, vec.z);
+		}
+	}
 
-#define BindUniformsV4(map, func) for (auto pair : (map)) {\
-	const auto& vec = pair.second;\
-	(func)(pair.first, vec.x, vec.y, vec.z, vec.w);\
-}\
+	template<typename T>
+	void BindUniformsT4(std::unordered_map<int, Vector4<T>> map, std::function<void(int, T, T, T, T)> fn)
+	{
+		for (const auto& pair : map)
+		{
+			const auto& vec = pair.second;
+			fn(pair.first, vec.x, vec.y, vec.z, vec.w);
+		}
+	}
 
 	void Material::Bind() const
 	{
 		m_shader.Bind();
 
-		BindUniformsV4(m_uniformsF4, glUniform4f);
-		BindUniformsV3(m_uniformsF3, glUniform3f);
-		BindUniformsV2(m_uniformsF2, glUniform2f);
-		BindUniformsV1(m_uniformsF1, glUniform1f);
+		BindUniformsT4<float>(m_uniformsF4, glUniform4f);
+		BindUniformsT3<float>(m_uniformsF3, glUniform3f);
+		BindUniformsT2<float>(m_uniformsF2, glUniform2f);
+		BindUniformsT1<float>(m_uniformsF1, glUniform1f);
 
-		BindUniformsV4(m_uniformsI4, glUniform4i);
-		BindUniformsV3(m_uniformsI3, glUniform3i);
-		BindUniformsV2(m_uniformsI2, glUniform2i);
-		BindUniformsV1(m_uniformsI1, glUniform1i);
+		BindUniformsT4<int>(m_uniformsI4, glUniform4i);
+		BindUniformsT3<int>(m_uniformsI3, glUniform3i);
+		BindUniformsT2<int>(m_uniformsI2, glUniform2i);
+		BindUniformsT1<int>(m_uniformsI1, glUniform1i);
 
-		BindUniformsV4(m_uniformsUI4, glUniform4ui);
-		BindUniformsV3(m_uniformsUI3, glUniform3ui);
-		BindUniformsV2(m_uniformsUI2, glUniform2ui);
-		BindUniformsV1(m_uniformsUI1, glUniform1ui);
+		BindUniformsT4<unsigned int>(m_uniformsUI4, glUniform4ui);
+		BindUniformsT3<unsigned int>(m_uniformsUI3, glUniform3ui);
+		BindUniformsT2<unsigned int>(m_uniformsUI2, glUniform2ui);
+		BindUniformsT1<unsigned int>(m_uniformsUI1, glUniform1ui);
 	}
 
 	void Material::Unbind() const
@@ -80,72 +88,72 @@ namespace ROGLL
 	void Material::Set4(const std::string& name, Vector4<int> value)
 	{
 		int location = m_shader.GetUniformLocation(name);
-		SetUniform(m_uniformsI4, location, value);
+		m_uniformsI4[location] = value;
 	}
 
 	void Material::Set4(const std::string& name, Vector4<unsigned int> value)
 	{
 		int location = m_shader.GetUniformLocation(name);
-		SetUniform(m_uniformsUI4, location, value);
+		m_uniformsUI4[location] = value;
 	}
 
 	void Material::Set4(const std::string& name, Vector4<float> value)
 	{
 		int location = m_shader.GetUniformLocation(name);
-		SetUniform(m_uniformsF4, location, value);
+		m_uniformsF4[location] = value;
 	}
 
 	void Material::Set3(const std::string& name, Vector3<int> value)
 	{
 		int location = m_shader.GetUniformLocation(name);
-		SetUniform(m_uniformsI3, location, value);
+		m_uniformsI3[location] = value;
 	}
 
 	void Material::Set3(const std::string& name, Vector3<unsigned int> value)
 	{
 		int location = m_shader.GetUniformLocation(name);
-		SetUniform(m_uniformsUI3, location, value);
+		m_uniformsUI3[location] = value;
 	}
 
 	void Material::Set3(const std::string& name, Vector3<float> value)
 	{
 		int location = m_shader.GetUniformLocation(name);
-		SetUniform(m_uniformsF3, location, value);
+		m_uniformsF3[location] = value;
 	}
 
 	void Material::Set2(const std::string& name, Vector2<int> value)
 	{
 		int location = m_shader.GetUniformLocation(name);
-		SetUniform(m_uniformsI2, location, value);
+		m_uniformsI2[location] = value;
 	}
 
 	void Material::Set2(const std::string& name, Vector2<unsigned int> value)
 	{
 		int location = m_shader.GetUniformLocation(name);
-		SetUniform(m_uniformsUI2, location, value);
+		m_uniformsUI2[location] = value;
 	}
 
 	void Material::Set2(const std::string& name, Vector2<float> value)
 	{
 		int location = m_shader.GetUniformLocation(name);
-		SetUniform(m_uniformsF2, location, value);
+		m_uniformsF2[location] = value;
 	}
 
 	void Material::Set(const std::string& name, Vector1<int> value)
 	{
 		int location = m_shader.GetUniformLocation(name);
-		SetUniform(m_uniformsI1, location, value);
+		m_uniformsI1[location] = value;
 	}
 
 	void Material::Set(const std::string& name, Vector1<unsigned int> value)
 	{
 		int location = m_shader.GetUniformLocation(name);
-		SetUniform(m_uniformsUI1, location, value);
+		m_uniformsUI1[location] = value;
 	}
 
 	void Material::Set(const std::string& name, Vector1<float> value)
 	{
 		int location = m_shader.GetUniformLocation(name);
-		SetUniform(m_uniformsF1, location, value);
+		m_uniformsF1[location] = value;
 	}
 }
