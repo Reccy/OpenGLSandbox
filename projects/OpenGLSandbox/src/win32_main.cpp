@@ -118,13 +118,8 @@ int main(void)
 	};
 
 	ROGLL::VertexArray vertexArray;
-	vertexArray.Bind();
-
 	ROGLL::IndexBuffer indexBuffer(&indices, sizeof(indices));
-	indexBuffer.Bind();
-
 	ROGLL::VertexBuffer vertexBuffer(&vertices, sizeof(vertices));
-	vertexBuffer.Bind();
 
 	ROGLL::VertexAttributes layout;
 	layout.Add<float>(2);

@@ -6,6 +6,7 @@ namespace ROGLL
 	VertexArray::VertexArray()
 	{
 		glGenVertexArrays(1, &m_arrayId);
+		glBindVertexArray(m_arrayId);
 	}
 
 	VertexArray::~VertexArray()
