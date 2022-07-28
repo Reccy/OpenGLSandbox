@@ -25,14 +25,10 @@ static Vector4<float> White { 1.0f, 1.0f, 1.0f, 1.0f };
 static Vector4<float>* ClearColor = &Red;
 static Vector4<float>* MaterialColor = &Red;
 
-void GL_FramebufferResized(GLFWwindow* window, int width, int height)
+static void _ProcessInput(const ROGLL::Window& windowRef)
 {
-	std::cout << "Framebuffer resized (" << width << "x, " << height << "y)" << std::endl;
-	glViewport(0, 0, width, height);
-}
+	GLFWwindow* window = windowRef.GetHandle();
 
-void GL_ProcessInput(GLFWwindow* window)
-{
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
 
@@ -63,45 +59,7 @@ void GL_ProcessInput(GLFWwindow* window)
 
 int main(void)
 {
-	glfwInit();
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
-	GLFWwindow* window = glfwCreateWindow(800, 600, "Starting...", NULL, NULL);
-
-	if (window == NULL)
-	{
-		std::cout << "Failed to create GLFW window" << std::endl;
-		glfwTerminate();
-		return -1;
-	}
-
-	glfwMakeContextCurrent(window);
-
-	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-	{
-		std::cout << "Failed to initialize GLAD" << std::endl;
-		return -1;
-	}
-
-	const GLubyte* glVersion = glGetString(GL_VERSION);
-
-	std::cout << "OpenGL Initialized. Version: " << glVersion << std::endl;
-
-	std::stringstream ss;
-	ss << "OpenGL Sandbox (Driver: " << glVersion << ")";
-
-	std::string strWindowTitle = ss.str();
-
-	std::string glWindowTitle = strWindowTitle;
-
-	glfwSetWindowTitle(window, glWindowTitle.c_str());
-	glfwSwapInterval(1);
-
-	glViewport(0, 0, 800, 600);
-
-	glfwSetFramebufferSizeCallback(window, GL_FramebufferResized);
+	ROGLL::Window window("OpenGL Sandbox", 800, 600);
 
 	const unsigned int vertexCount = 4;
 	const unsigned int vertexElementCount = vertexCount * 2;
@@ -129,9 +87,9 @@ int main(void)
 	ROGLL::Shader shader("res/shaders/Default.shader");
 	ROGLL::Material mat(shader);
 
-	while (!glfwWindowShouldClose(window))
+	while (!window.ShouldClose())
 	{
-		GL_ProcessInput(window);
+		_ProcessInput(window);
 
 		mat.Set4("uColor", *MaterialColor);
 		mat.Bind();
@@ -141,10 +99,9 @@ int main(void)
 
 		glDrawElements(GL_TRIANGLES, vertexElementCount, GL_UNSIGNED_INT, (void*)0);
 
-		glfwSwapBuffers(window);
-		glfwPollEvents();
+		window.SwapBuffers();
+		window.PollEvents();
 	}
 
-	glfwTerminate();
 	return 0;
 }
