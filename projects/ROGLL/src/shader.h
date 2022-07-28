@@ -8,7 +8,7 @@ namespace ROGLL
 	private:
 		unsigned int m_shaderId;
 	public:
-		Shader(std::string sourceFilepath);
+		Shader(const std::string& sourceFilepath);
 
 		void Bind() const;
 		void Unbind() const;

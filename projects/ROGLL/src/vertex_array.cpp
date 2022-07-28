@@ -30,7 +30,7 @@ namespace ROGLL
 
 		auto attributesVector = attributes.GetAttributes();
 
-		for (size_t i = 0; i < attributesVector.size(); i++)
+		for (GLuint i = 0; i < attributesVector.size(); i++)
 		{
 			auto attribute = attributesVector[i];
 

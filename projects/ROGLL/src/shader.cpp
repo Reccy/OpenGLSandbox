@@ -145,7 +145,7 @@ static unsigned int CreateShaderProgram(const std::string& vertexShaderSource, c
 
 namespace ROGLL
 {
-	Shader::Shader(std::string sourceFilepath)
+	Shader::Shader(const std::string& sourceFilepath)
 		: m_shaderId(0)
 	{
 		ShaderProgramSource shaderSource = LoadShaderSource(sourceFilepath);
