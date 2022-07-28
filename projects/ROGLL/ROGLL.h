@@ -8,3 +8,4 @@
 #include "src/material.h"
 #include "src/vector.h"
 #include "src/window.h"
+#include "src/renderer.h"

@@ -1,6 +1,3 @@
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
-
 #include <iostream>
 #include <sstream>
 
@@ -69,15 +66,17 @@ int main(void)
 		 0.5,  0.5,
 		-0.5, 0.5,
 	};
+	float* ptrVertices = vertices;
 
 	unsigned int indices[] = {
 		0, 1, 2,
 		2, 3, 0,
 	};
+	unsigned int* ptrIndices = indices;
 
 	ROGLL::VertexArray vertexArray;
-	ROGLL::IndexBuffer indexBuffer(&indices, sizeof(indices));
-	ROGLL::VertexBuffer vertexBuffer(&vertices, sizeof(vertices));
+	ROGLL::IndexBuffer indexBuffer(ptrIndices, sizeof(indices));
+	ROGLL::VertexBuffer vertexBuffer(ptrVertices, sizeof(vertices));
 
 	ROGLL::VertexAttributes layout;
 	layout.Add<float>(2);
@@ -87,17 +86,18 @@ int main(void)
 	ROGLL::Shader shader("res/shaders/Default.shader");
 	ROGLL::Material mat(shader);
 
+	ROGLL::Renderer renderer;
+
 	while (!window.ShouldClose())
 	{
 		_ProcessInput(window);
 
 		mat.Set4("uColor", *MaterialColor);
-		mat.Bind();
 
-		glClearColor(ClearColor->x, ClearColor->y, ClearColor->z, ClearColor->w);
-		glClear(GL_COLOR_BUFFER_BIT);
+		renderer.SetClearColor(*ClearColor);
+		renderer.Clear();
 
-		glDrawElements(GL_TRIANGLES, vertexElementCount, GL_UNSIGNED_INT, (void*)0);
+		renderer.Draw(vertexArray, indexBuffer, mat);
 
 		window.SwapBuffers();
 		window.PollEvents();

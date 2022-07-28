@@ -6,11 +6,14 @@ namespace ROGLL
 	{
 	private:
 		unsigned int m_bufferId;
+		unsigned int m_count;
 	public:
-		IndexBuffer(const void* data, const int size);
+		IndexBuffer(unsigned int* data, const int size);
 		~IndexBuffer();
 
 		void Bind() const;
 		void Unbind() const;
+
+		unsigned int GetCount() const;
 	};
 }

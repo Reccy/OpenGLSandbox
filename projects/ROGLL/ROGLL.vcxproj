@@ -154,6 +154,7 @@
     <ClInclude Include="ROGLL.h" />
     <ClInclude Include="src\index_buffer.h" />
     <ClInclude Include="src\material.h" />
+    <ClInclude Include="src\renderer.h" />
     <ClInclude Include="src\shader.h" />
     <ClInclude Include="src\vector.h" />
     <ClInclude Include="src\vertex_attributes.h" />
@@ -165,6 +166,7 @@
     <ClCompile Include="ROGLL.cpp" />
     <ClCompile Include="src\index_buffer.cpp" />
     <ClCompile Include="src\material.cpp" />
+    <ClCompile Include="src\renderer.cpp" />
     <ClCompile Include="src\shader.cpp" />
     <ClCompile Include="src\vertex_attributes.cpp" />
     <ClCompile Include="src\vertex_array.cpp" />
