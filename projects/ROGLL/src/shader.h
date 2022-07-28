@@ -12,5 +12,7 @@ namespace ROGLL
 
 		void Bind() const;
 		void Unbind() const;
+
+		int GetUniformLocation(const std::string& name) const;
 	};
 }

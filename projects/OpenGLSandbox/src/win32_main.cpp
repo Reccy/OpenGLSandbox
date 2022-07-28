@@ -135,6 +135,12 @@ int main(void)
 	ShaderB = &b;
 	CurrentShader = ShaderA;
 
+	std::cout << "Uniform Location: "
+		<< a.GetUniformLocation("uColor") << std::endl;
+
+	ROGLL::Material mat(a);
+	mat.Set4("uColor", ROGLL::Vector4<float> { 1, 0, 0, 1 });
+
 	while (!glfwWindowShouldClose(window))
 	{
 		GL_ProcessInput(window);

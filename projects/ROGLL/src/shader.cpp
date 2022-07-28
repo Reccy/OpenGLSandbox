@@ -161,4 +161,10 @@ namespace ROGLL
 	{
 		glUseProgram(0);
 	}
+
+	int Shader::GetUniformLocation(const std::string& name) const
+	{
+		Bind();
+		return glGetUniformLocation(m_shaderId, name.c_str());
+	}
 }
