@@ -7,9 +7,9 @@ namespace ROGLL
 		glClear(GL_COLOR_BUFFER_BIT);
 	}
 
-	void Renderer::SetClearColor(const Vector4<float>& color)
+	void Renderer::SetClearColor(const RML::Tuple4<float>& color)
 	{
-		glClearColor(color.x, color.y, color.z, color.w);
+		glClearColor(color.x(), color.y(), color.z(), color.w());
 	}
 
 	void Renderer::Draw(const VertexArray& vertexArray, const IndexBuffer& indexBuffer, const Material& material)

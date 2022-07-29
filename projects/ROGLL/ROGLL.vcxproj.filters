@@ -36,9 +36,6 @@
     <ClInclude Include="src\material.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\vector.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\window.h">
       <Filter>Header Files</Filter>
     </ClInclude>

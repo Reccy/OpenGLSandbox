@@ -1,6 +1,6 @@
 #pragma once
 #include "shader.h"
-#include "vector.h"
+#include "RML/RML.h"
 #include <iostream>
 #include <unordered_map>
 
@@ -10,37 +10,37 @@ namespace ROGLL
 	{
 	private:
 		template<typename T>
-		using Vec1Uniforms = std::unordered_map<int, Vector1<T>>;
+		using Vec1Uniforms = std::unordered_map<int, T>;
 
 		template<typename T>
-		using Vec2Uniforms = std::unordered_map<int, Vector2<T>>;
+		using Vec2Uniforms = std::unordered_map<int, RML::Tuple2<T>>;
 
 		template<typename T>
-		using Vec3Uniforms = std::unordered_map<int, Vector3<T>>;
+		using Vec3Uniforms = std::unordered_map<int, RML::Tuple3<T>>;
 
 		template<typename T>
-		using Vec4Uniforms = std::unordered_map<int, Vector4<T>>;
+		using Vec4Uniforms = std::unordered_map<int, RML::Tuple4<T>>;
 	public:
 		Material(const Shader& shader);
 
 		void Bind() const;
 		void Unbind() const;
 
-		void Set4(const std::string& name, Vector4<int> value);
-		void Set4(const std::string& name, Vector4<unsigned int> value);
-		void Set4(const std::string& name, Vector4<float> value);
+		void Set4(const std::string& name, RML::Tuple4<int> value);
+		void Set4(const std::string& name, RML::Tuple4<unsigned int> value);
+		void Set4(const std::string& name, RML::Tuple4<float> value);
 
-		void Set3(const std::string& name, Vector3<int> value);
-		void Set3(const std::string& name, Vector3<unsigned int> value);
-		void Set3(const std::string& name, Vector3<float> value);
+		void Set3(const std::string& name, RML::Tuple3<int> value);
+		void Set3(const std::string& name, RML::Tuple3<unsigned int> value);
+		void Set3(const std::string& name, RML::Tuple3<float> value);
 
-		void Set2(const std::string& name, Vector2<int> value);
-		void Set2(const std::string& name, Vector2<unsigned int> value);
-		void Set2(const std::string& name, Vector2<float> value);
+		void Set2(const std::string& name, RML::Tuple2<int> value);
+		void Set2(const std::string& name, RML::Tuple2<unsigned int> value);
+		void Set2(const std::string& name, RML::Tuple2<float> value);
 
-		void Set(const std::string& name, Vector1<int> value);
-		void Set(const std::string& name, Vector1<unsigned int> value);
-		void Set(const std::string& name, Vector1<float> value);
+		void Set(const std::string& name, int value);
+		void Set(const std::string& name, unsigned int value);
+		void Set(const std::string& name, float value);
 	private:
 		const Shader& m_shader;
 

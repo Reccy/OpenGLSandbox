@@ -2,6 +2,7 @@
 #include <sstream>
 
 #include <ROGLL.h>
+#include <RML/RML.h>
 
 // === Learning Resources ===
 // Learn OpenGL: https://learnopengl.com/
@@ -9,18 +10,13 @@
 // Documentation: https://docs.gl/
 // Open.GL: https://open.gl/
 
-using ROGLL::Vector1;
-using ROGLL::Vector2;
-using ROGLL::Vector3;
-using ROGLL::Vector4;
+static RML::Tuple4<float> Red { 1.0f, 0.0f, 0.0f, 1.0f };
+static RML::Tuple4<float> Green { 0.0f, 1.0f, 0.0f, 1.0f };
+static RML::Tuple4<float> Blue { 0.0f, 0.0f, 1.0f, 1.0f };
+static RML::Tuple4<float> White { 1.0f, 1.0f, 1.0f, 1.0f };
 
-static Vector4<float> Red { 1.0f, 0.0f, 0.0f, 1.0f };
-static Vector4<float> Green { 0.0f, 1.0f, 0.0f, 1.0f };
-static Vector4<float> Blue { 0.0f, 0.0f, 1.0f, 1.0f };
-static Vector4<float> White { 1.0f, 1.0f, 1.0f, 1.0f };
-
-static Vector4<float>* ClearColor = &Red;
-static Vector4<float>* MaterialColor = &Red;
+static RML::Tuple4<float>* ClearColor = &Red;
+static RML::Tuple4<float>* MaterialColor = &Red;
 
 static void _ProcessInput(const ROGLL::Window& windowRef)
 {
