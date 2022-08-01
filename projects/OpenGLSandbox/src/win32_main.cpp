@@ -84,11 +84,19 @@ int main(void)
 
 	ROGLL::Renderer renderer;
 
+	RML::Transform t;
+
+	ClearColor = &White;
+
 	while (!window.ShouldClose())
 	{
 		_ProcessInput(window);
 
 		mat.Set4("uColor", *MaterialColor);
+
+		t = t.translate(0.005, 0, 0);
+		t = t.rotate(0, 0, 0.75);
+		mat.Set4x4("uMVP", t.matrix());
 
 		renderer.SetClearColor(*ClearColor);
 		renderer.Clear();

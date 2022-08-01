@@ -1,5 +1,6 @@
 #pragma once
 #include "shader.h"
+#include "types.h"
 #include "RML/RML.h"
 #include <iostream>
 #include <unordered_map>
@@ -10,21 +11,26 @@ namespace ROGLL
 	{
 	private:
 		template<typename T>
-		using Vec1Uniforms = std::unordered_map<int, T>;
+		using Mat4x4Uniforms = std::unordered_map<int, Matrix4x4<T>>;
 
 		template<typename T>
-		using Vec2Uniforms = std::unordered_map<int, RML::Tuple2<T>>;
+		using Vec4Uniforms = std::unordered_map<int, RML::Tuple4<T>>;
 
 		template<typename T>
 		using Vec3Uniforms = std::unordered_map<int, RML::Tuple3<T>>;
 
 		template<typename T>
-		using Vec4Uniforms = std::unordered_map<int, RML::Tuple4<T>>;
+		using Vec2Uniforms = std::unordered_map<int, RML::Tuple2<T>>;
+
+		template<typename T>
+		using Vec1Uniforms = std::unordered_map<int, T>;
 	public:
 		Material(const Shader& shader);
 
 		void Bind() const;
 		void Unbind() const;
+
+		void Set4x4(const std::string& name, Matrix4x4<float> value);
 
 		void Set4(const std::string& name, RML::Tuple4<int> value);
 		void Set4(const std::string& name, RML::Tuple4<unsigned int> value);
@@ -44,6 +50,7 @@ namespace ROGLL
 	private:
 		const Shader& m_shader;
 
+		Mat4x4Uniforms<float> m_uniformsF4x4;
 		Vec4Uniforms<float> m_uniformsF4;
 		Vec3Uniforms<float> m_uniformsF3;
 		Vec2Uniforms<float> m_uniformsF2;
