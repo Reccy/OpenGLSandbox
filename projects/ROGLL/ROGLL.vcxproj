@@ -160,6 +160,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="ROGLL.h" />
+    <ClInclude Include="src\camera.h" />
     <ClInclude Include="src\index_buffer.h" />
     <ClInclude Include="src\material.h" />
     <ClInclude Include="src\renderer.h" />
@@ -172,6 +173,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ROGLL.cpp" />
+    <ClCompile Include="src\camera.cpp" />
     <ClCompile Include="src\index_buffer.cpp" />
     <ClCompile Include="src\material.cpp" />
     <ClCompile Include="src\renderer.cpp" />

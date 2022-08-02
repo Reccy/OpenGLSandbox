@@ -84,7 +84,12 @@ int main(void)
 
 	ROGLL::Renderer renderer;
 
-	RML::Transform t;
+	RML::Matrix<double, 4, 4> mvp;
+
+	RML::Transform m;
+	ROGLL::Camera vp(800, 600, 60);
+
+	m.translate(0, 0, 1);
 
 	ClearColor = &White;
 
@@ -94,9 +99,12 @@ int main(void)
 
 		mat.Set4("uColor", *MaterialColor);
 
-		t = t.translate(0.005, 0, 0);
-		t = t.rotate(0, 0, 0.75);
-		mat.Set4x4("uMVP", t.matrix());
+		m.translate(0.005, 0, 0);
+		m.rotate(0, 0, 0.75);
+
+		mvp = vp.matrix() * m.matrix().invert();
+
+		mat.Set4x4("uMVP", mvp);
 
 		renderer.SetClearColor(*ClearColor);
 		renderer.Clear();
