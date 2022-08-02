@@ -18,9 +18,30 @@ static RML::Tuple4<float> White { 1.0f, 1.0f, 1.0f, 1.0f };
 static RML::Tuple4<float>* ClearColor = &Red;
 static RML::Tuple4<float>* MaterialColor = &Red;
 
+static bool MoveDown = false;
+static bool MoveUp = false;
+static bool MoveLeft = false;
+static bool MoveRight = false;
+static bool RotLeft = false;
+static bool RotRight = false;
+static float VMove = 0;
+static float HMove = 0;
+static float Rot = 0;
+
 static void _ProcessInput(const ROGLL::Window& windowRef)
 {
 	GLFWwindow* window = windowRef.GetHandle();
+
+	MoveDown = glfwGetKey(window, GLFW_KEY_K) == GLFW_PRESS;
+	MoveUp = glfwGetKey(window, GLFW_KEY_I) == GLFW_PRESS;
+	MoveLeft = glfwGetKey(window, GLFW_KEY_J) == GLFW_PRESS;
+	MoveRight = glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS;
+	RotLeft = glfwGetKey(window, GLFW_KEY_O) == GLFW_PRESS;
+	RotRight = glfwGetKey(window, GLFW_KEY_U) == GLFW_PRESS;
+
+	VMove = (MoveUp * 1) - (MoveDown * 1);
+	HMove = (MoveRight * 1) - (MoveLeft * 1);
+	Rot = (RotRight * 1) - (RotLeft * 1);
 
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
@@ -86,12 +107,14 @@ int main(void)
 
 	RML::Matrix<double, 4, 4> mvp;
 
-	RML::Transform m;
-	ROGLL::Camera vp(800, 600, 60);
-
-	m.translate(0, 0, 1);
+	RML::Transform model;
+	ROGLL::Camera cam(800, 600);
+	cam.transform.translate(0, 0, 1);
 
 	ClearColor = &White;
+
+	model.translate(0, 3, 0);
+	model.scale(100, 100, 1);
 
 	while (!window.ShouldClose())
 	{
@@ -99,11 +122,12 @@ int main(void)
 
 		mat.Set4("uColor", *MaterialColor);
 
-		m.translate(0.005, 0, 0);
-		m.rotate(0, 0, 0.75);
+		model.translate(0, -0.2, 0);
 
-		mvp = vp.matrix() * m.matrix().invert();
+		cam.transform.rotate(0, 0, Rot);
+		cam.transform.translate(HMove * 10, VMove * 10, 0);
 
+		mvp = cam.GetViewProjectionMatrix() * model.matrix();
 		mat.Set4x4("uMVP", mvp);
 
 		renderer.SetClearColor(*ClearColor);

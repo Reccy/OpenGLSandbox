@@ -66,7 +66,7 @@ namespace ROGLL
 		for (const auto& pair : map)
 		{
 			const auto& matrix = pair.second;
-			glUniformMatrix4fv(pair.first, 1, true, matrix.data());
+			glUniformMatrix4fv(pair.first, 1, true , matrix.data());
 		}
 	}
 
