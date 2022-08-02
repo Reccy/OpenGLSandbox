@@ -15,7 +15,7 @@ static RML::Tuple4<float> Green { 0.0f, 1.0f, 0.0f, 1.0f };
 static RML::Tuple4<float> Blue { 0.0f, 0.0f, 1.0f, 1.0f };
 static RML::Tuple4<float> White { 1.0f, 1.0f, 1.0f, 1.0f };
 
-static RML::Tuple4<float>* ClearColor = &Red;
+static RML::Tuple4<float>* ClearColor = &White;
 static RML::Tuple4<float>* MaterialColor = &Red;
 
 static bool MoveDown = false;
@@ -75,25 +75,21 @@ int main(void)
 {
 	ROGLL::Window window("OpenGL Sandbox", 800, 600);
 
-	const unsigned int vertexCount = 4;
-	const unsigned int vertexElementCount = vertexCount * 2;
-	float vertices[vertexElementCount] = {
+	float vertices[] = {
 		-0.5, -0.5,
 		 0.5, -0.5,
 		 0.5,  0.5,
 		-0.5, 0.5,
 	};
-	float* ptrVertices = vertices;
 
 	unsigned int indices[] = {
 		0, 1, 2,
 		2, 3, 0,
 	};
-	unsigned int* ptrIndices = indices;
 
 	ROGLL::VertexArray vertexArray;
-	ROGLL::IndexBuffer indexBuffer(ptrIndices, sizeof(indices));
-	ROGLL::VertexBuffer vertexBuffer(ptrVertices, sizeof(vertices));
+	ROGLL::IndexBuffer indexBuffer(indices, sizeof(indices));
+	ROGLL::VertexBuffer vertexBuffer(vertices, sizeof(vertices));
 
 	ROGLL::VertexAttributes layout;
 	layout.Add<float>(2);
@@ -108,12 +104,10 @@ int main(void)
 	RML::Matrix<double, 4, 4> mvp;
 
 	RML::Transform model;
-	ROGLL::Camera cam(800, 600);
-	cam.transform.translate(0, 0, 1);
+	ROGLL::Camera cam(800, 600, 90);
+	cam.transform.translate(100, 0,-100);
+	cam.transform.rotate(0, -10, 0);
 
-	ClearColor = &White;
-
-	model.translate(0, 3, 0);
 	model.scale(100, 100, 1);
 
 	while (!window.ShouldClose())
@@ -123,6 +117,7 @@ int main(void)
 		mat.Set4("uColor", *MaterialColor);
 
 		model.translate(0, -0.2, 0);
+		model.rotate(0, 0, 0.5);
 
 		cam.transform.rotate(0, 0, Rot);
 		cam.transform.translate(HMove * 10, VMove * 10, 0);
