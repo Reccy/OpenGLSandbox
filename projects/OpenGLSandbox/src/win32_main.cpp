@@ -76,15 +76,37 @@ int main(void)
 	ROGLL::Window window("OpenGL Sandbox", 800, 600);
 
 	float vertices[] = {
-		-0.5, -0.5,
-		 0.5, -0.5,
-		 0.5,  0.5,
-		-0.5, 0.5,
+		// FRONT
+		-0.5, -0.5, 0.5,
+		 0.5, -0.5, 0.5,
+		 0.5,  0.5, 0.5,
+		-0.5, 0.5, 0.5,
+		//BACK
+		-0.5, -0.5, -0.5, // idx 4
+		 0.5, -0.5, -0.5,
+		 0.5,  0.5, -0.5,
+		-0.5, 0.5, -0.5,
 	};
 
 	unsigned int indices[] = {
+		// FRONT
 		0, 1, 2,
 		2, 3, 0,
+		// BACK
+		4, 5, 6,
+		6, 7, 4,
+		// LEFT
+		0, 4, 7,
+		7, 3, 0,
+		// RIGHT
+		1, 5, 6,
+		6, 2, 1,
+		// TOP
+		2, 6, 7,
+		7, 3, 2,
+		// BOTTOM
+		1, 5, 4,
+		4, 0, 1
 	};
 
 	ROGLL::VertexArray vertexArray;
@@ -92,7 +114,7 @@ int main(void)
 	ROGLL::VertexBuffer vertexBuffer(vertices, sizeof(vertices));
 
 	ROGLL::VertexAttributes layout;
-	layout.Add<float>(2);
+	layout.Add<float>(3);
 
 	vertexArray.SetBuffer(layout, vertexBuffer);
 
@@ -105,10 +127,9 @@ int main(void)
 
 	RML::Transform model;
 	ROGLL::Camera cam(800, 600, 90);
-	cam.transform.translate(100, 0,-100);
-	cam.transform.rotate(0, -10, 0);
+	cam.transform.translate(0, 0, -100);
 
-	model.scale(100, 100, 1);
+	model.scale(20, 20, 20);
 
 	while (!window.ShouldClose())
 	{
@@ -116,8 +137,7 @@ int main(void)
 
 		mat.Set4("uColor", *MaterialColor);
 
-		model.translate(0, -0.2, 0);
-		model.rotate(0, 0, 0.5);
+		model.rotate(0.5, 0, 0);
 
 		cam.transform.rotate(0, 0, Rot);
 		cam.transform.translate(HMove * 10, VMove * 10, 0);
