@@ -24,12 +24,18 @@ static bool MoveLeft = false;
 static bool MoveRight = false;
 static bool MoveForward = false;
 static bool MoveBackward = false;
+static bool RotateXClockwise = false;
+static bool RotateXCounterClockwise = false;
 static bool RotateYClockwise = false;
 static bool RotateYCounterClockwise = false;
+static bool RotateZClockwise = false;
+static bool RotateZCounterClockwise = false;
 static float VMove = 0;
 static float HMove = 0;
 static float DMove = 0;
+static float RotX = 0;
 static float RotY = 0;
+static float RotZ = 0;
 static float Fov = 90;
 
 static inline float _Deg2Rad(float deg)
@@ -48,14 +54,20 @@ static void _ProcessInput(const ROGLL::Window& windowRef)
 	MoveForward = glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS;
 	MoveBackward = glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS;
 
-	RotateYClockwise = glfwGetKey(window, GLFW_KEY_J) == GLFW_PRESS;
-	RotateYCounterClockwise = glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS;
+	RotateXClockwise = glfwGetKey(window, GLFW_KEY_K) == GLFW_PRESS;
+	RotateXCounterClockwise = glfwGetKey(window, GLFW_KEY_I) == GLFW_PRESS;
+	RotateYClockwise = glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS;
+	RotateYCounterClockwise = glfwGetKey(window, GLFW_KEY_J) == GLFW_PRESS;
+	RotateZClockwise = glfwGetKey(window, GLFW_KEY_O) == GLFW_PRESS;
+	RotateZCounterClockwise = glfwGetKey(window, GLFW_KEY_U) == GLFW_PRESS;
 
 	VMove = (MoveUp * 1) - (MoveDown * 1);
 	HMove = (MoveRight * 1) - (MoveLeft * 1);
 	DMove = (MoveForward * 1) - (MoveBackward * 1);
 
+	RotX = (RotateXClockwise * 1) - (RotateXCounterClockwise * 1);
 	RotY = (RotateYClockwise * 1) - (RotateYCounterClockwise * 1);
+	RotZ = (RotateZClockwise * 1) - (RotateZCounterClockwise * 1);
 
 	if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS)
 		Fov += 0.5;
@@ -138,7 +150,7 @@ int main(void)
 
 		model.rotate(0.5, 0, 0);
 
-		cam.transform.rotate(0, RotY * 10, 0);
+		cam.transform.rotate(RotX * 2, RotY * 2, RotZ * 2);
 		cam.transform.translate(HMove * 10, VMove * 10, DMove * 10);
 
 		mvp = cam.GetProjectionMatrix() * cam.GetViewMatrix() * model.matrix();
