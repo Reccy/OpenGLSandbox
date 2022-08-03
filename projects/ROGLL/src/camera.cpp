@@ -19,7 +19,7 @@ namespace ROGLL
 		float w = 1.0f / width;
 		float h = 1.0f / height;
 		float x = -2.0f / (m_zFar - m_zNear);
-		float y = ((m_zFar + m_zNear) / (m_zFar - m_zNear));
+		float y = -((m_zFar + m_zNear) / (m_zFar - m_zNear));
 
 		m_projectionMatrix = RML::Matrix<double, 4, 4>({
 			w, 0, 0, 0,
@@ -29,10 +29,10 @@ namespace ROGLL
 		});
 	}
 
-	void Camera::SetPerspective(float width, float height, float fov)
+	void Camera::SetPerspective(float width, float height, float fovRadians)
 	{
-		float a = (height / width) * (1 / tan(fov/2));
-		float b = (1/tan(fov/2));
+		float a = (height / width) * (1 / tan(fovRadians/2));
+		float b = (1/tan(fovRadians/2));
 		float c = m_zFar / (m_zFar - m_zNear);
 		float d = -((m_zFar * m_zNear) / (m_zFar - m_zNear));
 
@@ -44,8 +44,13 @@ namespace ROGLL
 		});
 	}
 
-	const RML::Matrix<double, 4, 4> Camera::GetViewProjectionMatrix() const
+	const RML::Matrix<double, 4, 4> Camera::GetViewMatrix() const
 	{
-		return m_projectionMatrix * transform.matrix().invert();
+		return transform.matrix().invert();
+	}
+
+	const RML::Matrix<double, 4, 4> Camera::GetProjectionMatrix() const
+	{
+		return m_projectionMatrix;
 	}
 }

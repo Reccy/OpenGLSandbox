@@ -14,14 +14,15 @@ namespace ROGLL
 		Camera(float width, float height);
 
 		/// <summary>
-		/// Creates a Camers with perspective projection
+		/// Creates a Camera with perspective projection
 		/// </summary>
 		Camera(float width, float height, float fov);
 
 		void SetOrthographic(float width, float height);
-		void SetPerspective(float width, float height, float fov);
+		void SetPerspective(float width, float height, float fovRadians);
 
-		const RML::Matrix<double, 4, 4> GetViewProjectionMatrix() const;
+		const RML::Matrix<double, 4, 4> GetViewMatrix() const;
+		const RML::Matrix<double, 4, 4> GetProjectionMatrix() const;
 	private:
 		RML::Matrix<double, 4, 4> m_projectionMatrix;
 		

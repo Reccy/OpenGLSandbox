@@ -22,53 +22,49 @@ static bool MoveDown = false;
 static bool MoveUp = false;
 static bool MoveLeft = false;
 static bool MoveRight = false;
-static bool RotLeft = false;
-static bool RotRight = false;
+static bool MoveForward = false;
+static bool MoveBackward = false;
+static bool RotateYClockwise = false;
+static bool RotateYCounterClockwise = false;
 static float VMove = 0;
 static float HMove = 0;
-static float Rot = 0;
+static float DMove = 0;
+static float RotY = 0;
+static float Fov = 90;
+
+static inline float _Deg2Rad(float deg)
+{
+	return deg * 0.0174533;
+}
 
 static void _ProcessInput(const ROGLL::Window& windowRef)
 {
 	GLFWwindow* window = windowRef.GetHandle();
 
-	MoveDown = glfwGetKey(window, GLFW_KEY_K) == GLFW_PRESS;
-	MoveUp = glfwGetKey(window, GLFW_KEY_I) == GLFW_PRESS;
-	MoveLeft = glfwGetKey(window, GLFW_KEY_J) == GLFW_PRESS;
-	MoveRight = glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS;
-	RotLeft = glfwGetKey(window, GLFW_KEY_O) == GLFW_PRESS;
-	RotRight = glfwGetKey(window, GLFW_KEY_U) == GLFW_PRESS;
+	MoveDown = glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS;
+	MoveUp = glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS;
+	MoveLeft = glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS;
+	MoveRight = glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS;
+	MoveForward = glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS;
+	MoveBackward = glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS;
+
+	RotateYClockwise = glfwGetKey(window, GLFW_KEY_J) == GLFW_PRESS;
+	RotateYCounterClockwise = glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS;
 
 	VMove = (MoveUp * 1) - (MoveDown * 1);
 	HMove = (MoveRight * 1) - (MoveLeft * 1);
-	Rot = (RotRight * 1) - (RotLeft * 1);
+	DMove = (MoveForward * 1) - (MoveBackward * 1);
+
+	RotY = (RotateYClockwise * 1) - (RotateYCounterClockwise * 1);
+
+	if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS)
+		Fov += 0.5;
+
+	if (glfwGetKey(window, GLFW_KEY_V) == GLFW_PRESS)
+		Fov -= 0.5;
 
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
-
-	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
-		ClearColor = &Red;
-
-	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
-		ClearColor = &Green;
-
-	if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
-		ClearColor = &Blue;
-
-	if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
-		ClearColor = &White;
-
-	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-		MaterialColor = &Red;
-
-	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-		MaterialColor = &Green;
-
-	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-		MaterialColor = &Blue;
-
-	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-		MaterialColor = &White;
 }
 
 int main(void)
@@ -126,7 +122,7 @@ int main(void)
 	RML::Matrix<double, 4, 4> mvp;
 
 	RML::Transform model;
-	ROGLL::Camera cam(800, 600, 90);
+	ROGLL::Camera cam(800, 600, 60);
 	cam.transform.translate(0, 0, -100);
 
 	model.scale(20, 20, 20);
@@ -135,14 +131,17 @@ int main(void)
 	{
 		_ProcessInput(window);
 
+		cam.SetPerspective(600, 800, _Deg2Rad(Fov));
+		std::cout << Fov << std::endl;
+
 		mat.Set4("uColor", *MaterialColor);
 
 		model.rotate(0.5, 0, 0);
 
-		cam.transform.rotate(0, 0, Rot);
-		cam.transform.translate(HMove * 10, VMove * 10, 0);
+		cam.transform.rotate(0, RotY * 10, 0);
+		cam.transform.translate(HMove * 10, VMove * 10, DMove * 10);
 
-		mvp = cam.GetViewProjectionMatrix() * model.matrix();
+		mvp = cam.GetProjectionMatrix() * cam.GetViewMatrix() * model.matrix();
 		mat.Set4x4("uMVP", mvp);
 
 		renderer.SetClearColor(*ClearColor);
