@@ -38,11 +38,6 @@ static float RotY = 0;
 static float RotZ = 0;
 static float Fov = 90;
 
-static inline float _Deg2Rad(float deg)
-{
-	return deg * 0.0174533;
-}
-
 static void _ProcessInput(const ROGLL::Window& windowRef)
 {
 	GLFWwindow* window = windowRef.GetHandle();
@@ -143,7 +138,7 @@ int main(void)
 	{
 		_ProcessInput(window);
 
-		cam.SetPerspective(600, 800, _Deg2Rad(Fov));
+		cam.SetPerspective(800, 600, RML::Trig::degrees_to_radians(Fov));
 		std::cout << Fov << std::endl;
 
 		mat.Set4("uColor", *MaterialColor);
