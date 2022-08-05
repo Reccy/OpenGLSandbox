@@ -139,14 +139,11 @@ int main(void)
 		_ProcessInput(window);
 
 		cam.SetPerspective(800, 600, RML::Trig::degrees_to_radians(Fov));
-		std::cout << Fov << std::endl;
 
 		mat.Set4("uColor", *MaterialColor);
 
-		model.rotate(0.5, 0, 0);
-
-		cam.transform.rotate(RotX * 2, RotY * 2, RotZ * 2);
 		cam.transform.translate(HMove * 10, VMove * 10, DMove * 10);
+		cam.transform.look_at({ 0,0,0 });
 
 		mvp = cam.GetProjectionMatrix() * cam.GetViewMatrix() * model.matrix();
 		mat.Set4x4("uMVP", mvp);
