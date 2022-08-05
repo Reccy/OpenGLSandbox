@@ -38,6 +38,9 @@ static float RotY = 0;
 static float RotZ = 0;
 static float Fov = 90;
 
+static float CamXRot = 0;
+static float CamYRot = 0;
+
 static void _ProcessInput(const ROGLL::Window& windowRef)
 {
 	GLFWwindow* window = windowRef.GetHandle();
@@ -142,8 +145,13 @@ int main(void)
 
 		mat.Set4("uColor", *MaterialColor);
 
-		cam.transform.translate(HMove * 10, VMove * 10, DMove * 10);
-		cam.transform.look_at({ 0,0,0 });
+		cam.transform.position += cam.transform.rotation.inverse()
+			* RML::Vector(HMove * 5, VMove * 5, DMove * 5);
+
+		CamXRot += RotX;
+		CamYRot += RotY;
+
+		cam.transform.rotation = RML::Quaternion::euler_angles(CamXRot, CamYRot, 0);
 
 		mvp = cam.GetProjectionMatrix() * cam.GetViewMatrix() * model.matrix();
 		mat.Set4x4("uMVP", mvp);
