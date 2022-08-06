@@ -164,6 +164,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="lib\glad\glad.c" />
+    <ClCompile Include="lib\stb_image\stb_image.cpp" />
     <ClCompile Include="src\win32_main.cpp" />
   </ItemGroup>
   <ItemGroup>

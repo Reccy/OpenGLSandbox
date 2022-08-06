@@ -16,7 +16,7 @@ static RML::Tuple4<float> Blue { 0.0f, 0.0f, 1.0f, 1.0f };
 static RML::Tuple4<float> White { 1.0f, 1.0f, 1.0f, 1.0f };
 
 static RML::Tuple4<float>* ClearColor = &White;
-static RML::Tuple4<float>* MaterialColor = &Red;
+static RML::Tuple4<float>* MaterialColor = &White;
 
 static bool MoveDown = false;
 static bool MoveUp = false;
@@ -40,6 +40,9 @@ static float Fov = 90;
 
 static float CamXRot = 0;
 static float CamYRot = 0;
+
+static int WIDTH = 1024;
+static int HEIGHT = 768;
 
 static void _ProcessInput(const ROGLL::Window& windowRef)
 {
@@ -77,76 +80,145 @@ static void _ProcessInput(const ROGLL::Window& windowRef)
 		glfwSetWindowShouldClose(window, true);
 }
 
+struct VertexLayout
+{
+	RML::Tuple3<float> pos;
+	float u, v;
+};
+
 int main(void)
 {
-	ROGLL::Window window("OpenGL Sandbox", 800, 600);
+	ROGLL::Window window("OpenGL Sandbox", WIDTH, HEIGHT);
 
-	float vertices[] = {
+	RML::Tuple3<float> xyz(-0.5, -0.5, -0.5);
+	RML::Tuple3<float> xYz(-0.5,  0.5, -0.5);
+	RML::Tuple3<float> Xyz( 0.5, -0.5, -0.5);
+	RML::Tuple3<float> XYz( 0.5,  0.5, -0.5);
+
+	RML::Tuple3<float> xyZ(-0.5, -0.5, 0.5);
+	RML::Tuple3<float> xYZ(-0.5,  0.5, 0.5);
+	RML::Tuple3<float> XyZ( 0.5, -0.5, 0.5);
+	RML::Tuple3<float> XYZ( 0.5,  0.5, 0.5);
+
+	VertexLayout cubeVertices[] = {
 		// FRONT
-		-0.5, -0.5, 0.5,
-		 0.5, -0.5, 0.5,
-		 0.5,  0.5, 0.5,
-		-0.5, 0.5, 0.5,
+		{ xyz, 0, 0 },
+		{ Xyz, 1, 0 },
+		{ XYz, 1, 1 },
+		{ xYz, 0, 1 },
 		//BACK
-		-0.5, -0.5, -0.5, // idx 4
-		 0.5, -0.5, -0.5,
-		 0.5,  0.5, -0.5,
-		-0.5, 0.5, -0.5,
+		{ xYZ, 1, 1 }, // idx 4
+		{ XYZ, 0, 1 },
+		{ XyZ, 0, 0 },
+		{ xyZ, 1, 0 },
+		//TOP
+		{ xYz, 0, 0 }, // idx 8
+		{ XYz, 1, 0 },
+		{ XYZ, 1, 1 },
+		{ xYZ, 0, 1 },
+		//BOTTOM
+		{ xyZ, 0, 0 }, // idx 12
+		{ XyZ, 1, 0 },
+		{ Xyz, 1, 1 },
+		{ xyz, 0, 1 },
+		//LEFT
+		{ xyZ, 0, 0 }, // idx 16
+		{ xyz, 1, 0 },
+		{ xYz, 1, 1 },
+		{ xYZ, 0, 1 },
+		//RIGHT
+		{ XyZ, 0, 0, }, // idx 20
+		{ XYZ, 0, 1 },
+		{ XYz, 1, 1 },
+		{ Xyz, 1, 0 },
 	};
 
-	unsigned int indices[] = {
+	VertexLayout groundVertices[] = {
+		{ { -100, -0.5, -100 }, 0, 0, },
+		{ {  100, -0.5, -100 }, 0, 1, },
+		{ {  100, -0.5,  100 }, 1, 1, },
+		{ { -100, -0.5,  100 }, 1, 0, },
+	};
+
+	unsigned int cubeIndices[] = {
 		// FRONT
 		0, 1, 2,
 		2, 3, 0,
 		// BACK
 		4, 5, 6,
 		6, 7, 4,
-		// LEFT
-		0, 4, 7,
-		7, 3, 0,
-		// RIGHT
-		1, 5, 6,
-		6, 2, 1,
 		// TOP
-		2, 6, 7,
-		7, 3, 2,
+		8, 9, 10,
+		10, 11, 8,
 		// BOTTOM
-		1, 5, 4,
-		4, 0, 1
+		12, 13, 14,
+		14, 15, 12,
+		// LEFT
+		16, 17, 18,
+		18, 19, 16,
+		// RIGHT
+		20, 21, 22,
+		22, 23, 20,
+		// FLOOR
+		24, 25, 26,
+		26, 27, 24
 	};
 
-	ROGLL::VertexArray vertexArray;
-	ROGLL::IndexBuffer indexBuffer(indices, sizeof(indices));
-	ROGLL::VertexBuffer vertexBuffer(vertices, sizeof(vertices));
+	unsigned int groundIndices[] = {
+		0, 1, 2,
+		2, 3, 0,
+	};
+
+	ROGLL::VertexArray cubeVertexArray;
+	ROGLL::IndexBuffer cubeIndexLayout(cubeIndices, sizeof(cubeIndices));
+	ROGLL::VertexBuffer cubeVertexBuffer(cubeVertices, sizeof(cubeVertices));
 
 	ROGLL::VertexAttributes layout;
-	layout.Add<float>(3);
+	layout.Add<float>(3); // XYZ Position
+	layout.Add<float>(2); // UV
+	
+	cubeVertexArray.SetBuffer(layout, cubeVertexBuffer);
 
-	vertexArray.SetBuffer(layout, vertexBuffer);
+	ROGLL::VertexArray groundVertexArray;
+	ROGLL::IndexBuffer groundIndexLayout(groundIndices, sizeof(groundIndices));
+	ROGLL::VertexBuffer groundVertexBuffer(groundVertices, sizeof(groundVertices));
+
+	groundVertexArray.SetBuffer(layout, groundVertexBuffer);
 
 	ROGLL::Shader shader("res/shaders/Default.shader");
-	ROGLL::Material mat(shader);
+	ROGLL::Texture groundTexture("res/textures/Block.png");
+	ROGLL::Texture companionCubeTexture("res/textures/Companion.png");
+
+	ROGLL::Material cubeMaterial(shader);
+	cubeMaterial.SetTextureSlot(0, companionCubeTexture);
+	cubeMaterial.Set("uTexture", (unsigned int)0);
+
+	ROGLL::Material groundMaterial(shader);
+	groundMaterial.SetTextureSlot(0, groundTexture);
+	groundMaterial.Set("uTexture", (unsigned int)0);
 
 	ROGLL::Renderer renderer;
 
 	RML::Matrix<double, 4, 4> mvp;
 
 	RML::Transform model;
-	ROGLL::Camera cam(800, 600, 60);
-	cam.transform.translate(0, 0, -100);
+	ROGLL::Camera cam(WIDTH, HEIGHT, 60);
+	cam.transform.translate(0, 0, -10);
 
-	model.scale(20, 20, 20);
+	double speedFactor = 0.25;
 
 	while (!window.ShouldClose())
 	{
 		_ProcessInput(window);
 
-		cam.SetPerspective(800, 600, RML::Trig::degrees_to_radians(Fov));
+		cam.SetPerspective(WIDTH, HEIGHT, RML::Trig::degrees_to_radians(Fov));
 
-		mat.Set4("uColor", *MaterialColor);
+		cubeMaterial.Set4("uColor", *MaterialColor);
 
 		cam.transform.position += cam.transform.rotation.inverse()
-			* RML::Vector(HMove * 5, VMove * 5, DMove * 5);
+			* RML::Vector(HMove * speedFactor,
+				VMove * speedFactor,
+				DMove * speedFactor);
 
 		CamXRot += RotX;
 		CamYRot += RotY;
@@ -154,12 +226,13 @@ int main(void)
 		cam.transform.rotation = RML::Quaternion::euler_angles(CamXRot, CamYRot, 0);
 
 		mvp = cam.GetProjectionMatrix() * cam.GetViewMatrix() * model.matrix();
-		mat.Set4x4("uMVP", mvp);
+		cubeMaterial.Set4x4("uMVP", mvp);
 
 		renderer.SetClearColor(*ClearColor);
 		renderer.Clear();
 
-		renderer.Draw(vertexArray, indexBuffer, mat);
+		renderer.Draw(cubeVertexArray, cubeIndexLayout, cubeMaterial);
+		renderer.Draw(groundVertexArray, groundIndexLayout, groundMaterial);
 
 		window.SwapBuffers();
 		window.PollEvents();

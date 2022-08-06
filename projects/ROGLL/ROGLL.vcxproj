@@ -165,6 +165,7 @@
     <ClInclude Include="src\material.h" />
     <ClInclude Include="src\renderer.h" />
     <ClInclude Include="src\shader.h" />
+    <ClInclude Include="src\texture.h" />
     <ClInclude Include="src\types.h" />
     <ClInclude Include="src\vertex_attributes.h" />
     <ClInclude Include="src\vertex_array.h" />
@@ -172,12 +173,14 @@
     <ClInclude Include="src\window.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="lib\stb_image\stb_image.cpp" />
     <ClCompile Include="ROGLL.cpp" />
     <ClCompile Include="src\camera.cpp" />
     <ClCompile Include="src\index_buffer.cpp" />
     <ClCompile Include="src\material.cpp" />
     <ClCompile Include="src\renderer.cpp" />
     <ClCompile Include="src\shader.cpp" />
+    <ClCompile Include="src\texture.cpp" />
     <ClCompile Include="src\vertex_attributes.cpp" />
     <ClCompile Include="src\vertex_array.cpp" />
     <ClCompile Include="src\vertex_buffer.cpp" />

@@ -9,3 +9,4 @@
 #include "src/window.h"
 #include "src/renderer.h"
 #include "src/camera.h"
+#include "src/texture.h"

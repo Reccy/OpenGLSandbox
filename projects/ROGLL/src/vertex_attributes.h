@@ -12,6 +12,7 @@ namespace ROGLL
 			GLsizei count;
 			GLenum type;
 			GLboolean normalized;
+			unsigned int size;
 		};
 
 		GLsizei m_stride;
@@ -25,49 +26,49 @@ namespace ROGLL
 		template<>
 		void Add<float>(GLsizei count, GLboolean normalized)
 		{
-			m_attributes.push_back({ count, GL_FLOAT, normalized });
+			m_attributes.push_back({ count, GL_FLOAT, normalized, sizeof(float) });
 			m_stride += sizeof(GLfloat) * count;
 		}
 
 		template<>
 		void Add<int>(GLsizei count, GLboolean normalized)
 		{
-			m_attributes.push_back({ count, GL_INT, normalized });
+			m_attributes.push_back({ count, GL_INT, normalized, sizeof(int) });
 			m_stride += sizeof(GLint) * count;
 		}
 
 		template<>
 		void Add<unsigned int>(GLsizei count, GLboolean normalized)
 		{
-			m_attributes.push_back({ count, GL_UNSIGNED_INT, normalized });
+			m_attributes.push_back({ count, GL_UNSIGNED_INT, normalized, sizeof(unsigned int) });
 			m_stride += sizeof(GLuint) * count;
 		}
 
 		template<>
 		void Add<char>(GLsizei count, GLboolean normalized)
 		{
-			m_attributes.push_back({ count, GL_BYTE, normalized });
+			m_attributes.push_back({ count, GL_BYTE, normalized, sizeof(char) });
 			m_stride += sizeof(GLbyte) * count;
 		}
 
 		template<>
 		void Add<unsigned char>(GLsizei count, GLboolean normalized)
 		{
-			m_attributes.push_back({ count, GL_UNSIGNED_BYTE, normalized });
+			m_attributes.push_back({ count, GL_UNSIGNED_BYTE, normalized, sizeof(unsigned char) });
 			m_stride += sizeof(GLubyte) * count;
 		}
 
 		template<>
 		void Add<short>(GLsizei count, GLboolean normalized)
 		{
-			m_attributes.push_back({ count, GL_SHORT, normalized });
+			m_attributes.push_back({ count, GL_SHORT, normalized, sizeof(short) });
 			m_stride += sizeof(GLshort) * count;
 		}
 
 		template<>
 		void Add<unsigned short>(GLsizei count, GLboolean normalized)
 		{
-			m_attributes.push_back({ count, GL_UNSIGNED_SHORT, normalized});
+			m_attributes.push_back({ count, GL_UNSIGNED_SHORT, normalized, sizeof(unsigned short) });
 			m_stride += sizeof(GLushort) * count;
 		}
 

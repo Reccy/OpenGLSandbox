@@ -31,12 +31,16 @@ namespace ROGLL
 
 		auto attributesVector = attributes.GetAttributes();
 
+		unsigned int offsetAccumulator = 0;
+
 		for (GLuint i = 0; i < attributesVector.size(); i++)
 		{
 			auto attribute = attributesVector[i];
-
-			glVertexAttribPointer(i, attribute.count, attribute.type, attribute.normalized, attributes.GetStride(), (void*)0);
+			
+			glVertexAttribPointer(i, attribute.count, attribute.type, attribute.normalized, attributes.GetStride(), (void*)offsetAccumulator);
 			glEnableVertexAttribArray(i);
+
+			offsetAccumulator += attribute.count * attribute.size;
 		}
 	}
 }

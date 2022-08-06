@@ -70,6 +70,14 @@ namespace ROGLL
 		}
 	}
 
+	void BindTextureSlots(const std::vector<Material::TextureSlot>& slots)
+	{
+		for (const Material::TextureSlot& slot : slots)
+		{
+			slot.texture.Bind(slot.slot);
+		}
+	}
+
 	void Material::Bind() const
 	{
 		m_shader.Bind();
@@ -89,6 +97,8 @@ namespace ROGLL
 		BindUniformsT3<unsigned int>(m_uniformsUI3, glUniform3ui);
 		BindUniformsT2<unsigned int>(m_uniformsUI2, glUniform2ui);
 		BindUniformsT1<unsigned int>(m_uniformsUI1, glUniform1ui);
+	
+		BindTextureSlots(m_textureSlots);
 	}
 
 	void Material::Unbind() const
@@ -172,5 +182,10 @@ namespace ROGLL
 	{
 		int location = m_shader.GetUniformLocation(name);
 		m_uniformsF1[location] = value;
+	}
+
+	void Material::SetTextureSlot(unsigned int slot, const Texture& texture)
+	{
+		m_textureSlots.push_back({ slot, texture });
 	}
 }

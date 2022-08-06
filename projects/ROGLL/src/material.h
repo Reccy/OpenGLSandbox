@@ -1,6 +1,7 @@
 #pragma once
 #include "shader.h"
 #include "types.h"
+#include "texture.h"
 #include "RML/RML.h"
 #include <iostream>
 #include <unordered_map>
@@ -25,6 +26,12 @@ namespace ROGLL
 		template<typename T>
 		using Vec1Uniforms = std::unordered_map<int, T>;
 	public:
+		struct TextureSlot
+		{
+			unsigned int slot;
+			const Texture& texture;
+		};
+	public:
 		Material(const Shader& shader);
 
 		void Bind() const;
@@ -47,6 +54,8 @@ namespace ROGLL
 		void Set(const std::string& name, int value);
 		void Set(const std::string& name, unsigned int value);
 		void Set(const std::string& name, float value);
+
+		void SetTextureSlot(unsigned int slot, const Texture& texture);
 	private:
 		const Shader& m_shader;
 
@@ -65,5 +74,7 @@ namespace ROGLL
 		Vec3Uniforms<unsigned int> m_uniformsUI3;
 		Vec2Uniforms<unsigned int> m_uniformsUI2;
 		Vec1Uniforms<unsigned int> m_uniformsUI1;
+
+		std::vector<TextureSlot> m_textureSlots;
 	};
 }
